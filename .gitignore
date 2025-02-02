@@ -1,4 +1,5 @@
 /backup
+/application/config/config.php
 /database (pilih salahsatu file sql)
 /upload
 /vendor
