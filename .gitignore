@@ -10,3 +10,6 @@ yarn-error.log
 /.idea
 /.vscode
 
+/application/config/config.php
+/application/config/database.php
+/vendor
