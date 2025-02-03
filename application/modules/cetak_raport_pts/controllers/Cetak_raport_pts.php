@@ -2767,14 +2767,14 @@ class Cetak_raport_pts extends CI_Controller
         $semester = substr($tasm, -1);
         $rapor = $this->db->query("SELECT * FROM t_rapor WHERE id_siswa = $id_siswa and tahun = $tahun and semester =$semester and jenis_rapor=1")->row();
 
-        $rapor_detail       = $this->db->query("SELECT * FROM t_rapor_detail WHERE id_rapor = $rapor->id")->result_array();
-        $rapor_characters   = $this->db->query("SELECT * FROM t_raport_character WHERE id_rapor = $rapor->id")->result_array();
+        if (isset($rapor)) {
+            $rapor_detail       = $this->db->query("SELECT * FROM t_rapor_detail WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_characters   = $this->db->query("SELECT * FROM t_raport_character WHERE id_rapor = $rapor->id")->result_array();
+            $rapor->details     = $rapor_detail;
+            $rapor->characters  = $rapor_characters;
+            $this->load->view('cetak_pts_fix', $rapor);
+        }
 
-        $rapor->details     = $rapor_detail;
-        $rapor->characters  = $rapor_characters;
-
-        //1 = kurmer, 2 = K13
-        $this->load->view('cetak_pts_fix', $rapor);
 
         $html = ob_get_contents();
         ob_end_clean();
