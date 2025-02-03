@@ -1,11 +1,12 @@
 <style type="text/css">
-    .ctr {text-align: center}
-    .nso {}
+    .ctr {
+        text-align: center
+    }
 </style>
 <div class="row">
     <div class="col-md-12">
         <p>
-            <!--<a href="<?php echo base_url()."/".$url; ?>/cetak/<?php echo $this->uri->segment(3); ?>" class="btn btn-warning" target="_blank">Cetak</a>-->
+            <!--<a href="<?php echo base_url() . "/" . $url; ?>/cetak/<?php echo $this->uri->segment(3); ?>" class="btn btn-warning" target="_blank">Cetak</a>-->
         </p>
     </div>
 
@@ -14,47 +15,60 @@
             <div class="header">
                 <h4 class="title">Cetak Raport PAS</h4>
             </div>
-            <div class="content">  
+            <div class="content">
 
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th width="5%">No</th>
-                            <th width="40%">Nama</th>
-                            <th width="50%">Cetak</th>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Cetak</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <?php 
+                        <?php $no = 1 ?>
+                        <?php if (!empty($siswa_kelas)) { ?>
+                            <?php foreach ($siswa_kelas as $sk) { ?>
+                                <tr>
+                                    <td><?= $no; ?></td>
+                                    <td><?= $sk['nama'] ?></td>
+                                    <td class="text-center">
+                                        <?php if ($sk['terkunci']) { ?>
+                                            <a href="<?= base_url() . $url . "/diknas/" . $sk['id_siswa'] . "/" . $tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport Diknas</a>
+                                        <?php } else { ?>
+                                            <a href="<?= base_url() . $url . "/cetak/" . $sk['id_siswa'] . "/" . $tasm; ?>#toolbar=0" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport Diknas</a>
+                                        <?php } ?>
 
-                        $no = 1;
-                        if (!empty($siswa_kelas)) {
-                            foreach ($siswa_kelas as $sk) {  
-                        ?>
-                            <tr>
-                                <td><?php echo $no; ?></td>
-                                <td><?php echo $sk['nama']; ?></td>
-                                <td>
-                                    
-                                    <a href="<?php echo base_url().$url."/cetak/".$sk['id_siswa']."/".$tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i  class="fa fa-print"></i> Raport Diknas</a>
-                                    <a href="<?php echo base_url().$url."/cetak_projek/".$sk['id_siswa']."/".$tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i  class="fa fa-print"></i> Raport Projek</a>
-                                    <a href="<?php echo base_url().$url."/cetak_mh/".$sk['id_siswa']."/".$tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i  class="fa fa-print"></i> Raport MH</a>
-                                    <a href="<?php echo base_url().$url."/cetak_tahfiz/".$sk['id_siswa']."/".$tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i  class="fa fa-print"></i> Raport Tahfiz</a>
-                                </td>
-                            </tr>
-                        <?php 
-                                $no++;
-                            }
-                        } else {
-                            echo '<tr><td colspan="3">Belum ada data siswa</td></tr>';
-                        }
-                        ?>
+                                        <?php if ($sk['rapor_project']) { ?>
+                                            <a href="<?= base_url() . $url . "/cetak_projek/" . $sk['id_siswa'] . "/" . $tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport Projek</a>
+                                        <?php } ?>
 
-                        
-                        
+                                        <?php if ($sk['terkunci']) { ?>
+
+                                            <a href="<?= base_url() . $url . "/mhis/" . $sk['id_siswa'] . "/" . $tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport MH</a>
+                                        <?php } else { ?>
+
+                                            <a href="<?= base_url() . $url . "/cetak_mh/" . $sk['id_siswa'] . "/" . $tasm; ?>#toolbar=0" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport MH</a>
+                                        <?php } ?>
+
+                                        <a href="<?= base_url() . $url . "/cetak_tahfiz/" . $sk['id_siswa'] . "/" . $tasm; ?>" class="btn btn-success btn-sm" target="_blank"><i class="fa fa-print"></i> Raport Tahfiz</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if ($sk['terkunci']) { ?>
+                                            <span class="badge badge-primary"> <i class="fa fa-warning"></i> Terkunci</span>
+                                        <?php } else { ?>
+                                            <a href="<?= base_url() . $url . "/kunci_rapor/" . $sk['id_siswa'] . "/" . $tasm; ?>" class="btn btn-danger btn-sm"><i class="fa fa-key"></i> Kunci Rapor</a>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php $no++; ?>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <?= '<tr><td colspan="3">Belum ada data siswa</td></tr>'; ?>
+                        <?php } ?>
                     </tbody>
-                    
                 </table>
             </div>
         </div>

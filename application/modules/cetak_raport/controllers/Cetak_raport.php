@@ -21,9 +21,11 @@ class Cetak_raport extends CI_Controller
         $this->d['admkonid'] = $this->session->userdata($this->sespre . 'konid');
         $this->d['url'] = "cetak_raport";
 
-        $get_tasm = $this->db->query("SELECT tahun, nama_kepsek, nip_kepsek, tgl_raport FROM tahun WHERE aktif = 'Y'")->row_array();
+        $get_tasm = $this->db->query("SELECT * FROM tahun WHERE aktif = 'Y'")->row_array();
         $this->d['tasm'] = $get_tasm['tahun'];
         $this->d['ta'] = substr($get_tasm['tahun'], 0, 4);
+        $this->d['semester'] = substr($get_tasm['tahun'], 4, 1);
+        $this->d['id_tahun'] = $get_tasm['id'];
 
         $this->d['wk'] = $this->session->userdata('app_rapot_walikelas');
     }
@@ -33,7 +35,6 @@ class Cetak_raport extends CI_Controller
         $d['ds'] = $this->db->query("SELECT nama, nis, nisn FROM m_siswa WHERE id = '$id_siswa'")->row_array();
 
         $this->load->view('cetak_sampul1', $d);
-
     }
 
     public function sampul2($id_siswa)
@@ -49,7 +50,6 @@ class Cetak_raport extends CI_Controller
         $d['da'] = $this->db->query("SELECT * FROM tahun WHERE aktif = 'Y'")->row_array();
 
         $this->load->view('cetak_sampul4', $d);
-
     }
 
     public function prestasi_catatan($id_siswa, $tasm)
@@ -97,6 +97,12 @@ class Cetak_raport extends CI_Controller
                                     WHERE a.id = $id_siswa AND b.ta = '" . $d['ta'] . "'")->row_array();
 
         $d['det_siswa'] = $siswa;
+
+        //get template report
+        $d['det_raport'] = $this->db->query("SELECT * FROM tahun WHERE tahun = '$tasm'")->row();
+        $jenis_rapor = getJenisRaport($d['det_raport']->id, $d['det_siswa']['tingkat']);
+        $d['jenis_rapor'] = $jenis_rapor;
+        $isK13 = ($jenis_rapor->nama ?? "") === "K13" ? TRUE : FALSE;
 
         $d['wali_kelas'] = $this->db->query("SELECT 
                                 a.*, b.nama nmguru, b.nip, 
@@ -169,13 +175,13 @@ class Cetak_raport extends CI_Controller
         }
         foreach ($ambil_uts as $a2) {
             $idx = $a2['idmapel'];
-            
+
             //$pc_nilai = explode("//", $a2['nilai']);
 
             if ($a2['jenis'] == "h") {
                 $array1[$idx]['h'][] = $a2['nilai'];
             } else if ($a2['jenis'] == "t") {
-                    $array1[$idx]['t'] = $a2['nilai'];
+                $array1[$idx]['t'] = $a2['nilai'];
             } else if ($a2['jenis'] == "a") {
                 $array1[$idx]['a'] = $a2['nilai'];
             } else if ($a2['jenis'] == "c") {
@@ -257,7 +263,6 @@ class Cetak_raport extends CI_Controller
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             }
-
         }
         //echo j($nilai_pengetahuan);
         $d['nilai_pengetahuan'] = $nilai_pengetahuan;
@@ -551,10 +556,10 @@ class Cetak_raport extends CI_Controller
 
 
         $arr_huruf = array("a", "b", "c", "d", "e");
-        if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-        $d['nilai_utama'] .= '';
-        }else{
-        $d['nilai_utama'] .= '<tr><td colspan="9"><b>KELOMPOK A</b></td></tr>';    
+        if (!$isK13) {
+            $d['nilai_utama'] .= '';
+        } else {
+            $d['nilai_utama'] .= '<tr><td colspan="9"><b>KELOMPOK A</b></td></tr>';
         }
         $no = 0;
         $noket = 0;
@@ -641,7 +646,7 @@ class Cetak_raport extends CI_Controller
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
-            if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
+            if (!$isK13) {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -650,7 +655,7 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:330px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }else{
+            } else {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -662,7 +667,7 @@ class Cetak_raport extends CI_Controller
                                       
                                     </tr>';
             }
-            
+
             $d['nilai_keterampilan'] .= '
                                     <tr>
                                         <td class="ctr">' . $noket++ . '</td>
@@ -676,10 +681,10 @@ class Cetak_raport extends CI_Controller
         }
 
         //no pai kelompok B
-        if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-        $d['nilai_utama'] .= '';
-        }else{
-        $d['nilai_utama'] .= '<tr><td colspan="9"><b>KELOMPOK B</b></td></tr>';    
+        if (!$isK13) {
+            $d['nilai_utama'] .= '';
+        } else {
+            $d['nilai_utama'] .= '<tr><td colspan="9"><b>KELOMPOK B</b></td></tr>';
         }
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
             INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
@@ -718,7 +723,7 @@ class Cetak_raport extends CI_Controller
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
 
-            if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
+            if (!$isK13) {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -727,7 +732,7 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }else{
+            } else {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -757,10 +762,10 @@ class Cetak_raport extends CI_Controller
             INNER JOIN m_guru c ON b.id_guru = c.id WHERE kelompok = 'MULOK' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' AND b.tasm= '" . $tasm . "'")->result_array();
         $count = $this->db->query("SELECT * FROM m_mapel WHERE kelompok = 'MULOK' AND tambahan_sub = 'NO'")->num_rows();
         if ($count > 0) {
-            if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-            $d['nilai_utama'] .= '';
-            }else{
-            $d['nilai_utama'] .= '<tr><td colspan="9"><b>MUATAN LOKAL</b></td></tr>';    
+            if (!$isK13) {
+                $d['nilai_utama'] .= '';
+            } else {
+                $d['nilai_utama'] .= '<tr><td colspan="9"><b>MUATAN LOKAL</b></td></tr>';
             }
             foreach ($q_mapel as $i => $m) {
                 $idx = $m['id'];
@@ -794,8 +799,8 @@ class Cetak_raport extends CI_Controller
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
                 }
 
-                if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-                $d['nilai_utama'] .= '
+                if (!$isK13) {
+                    $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
                                         <td style="width:170px;">' . $m['nama'] . '</td>
@@ -803,8 +808,8 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }else{
-                $d['nilai_utama'] .= '
+                } else {
+                    $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
                                         <td style="width:170px;">' . $m['nama'] . '</td>
@@ -814,7 +819,7 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }
+                }
                 $d['nilai_keterampilan'] .= '
                                     <tr>
                                         <td class="ctr">' . $noket++ . '</td>
@@ -832,10 +837,10 @@ class Cetak_raport extends CI_Controller
             INNER JOIN m_guru c ON b.id_guru = c.id WHERE kelompok = 'PUS' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' AND b.tasm= '" . $tasm . "'")->result_array();
         $count = $this->db->query("SELECT * FROM m_mapel WHERE kelompok = 'PUS' AND tambahan_sub = 'NO'")->num_rows();
         if ($count > 0) {
-            if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-            $d['nilai_utama'] .= '';
-            }else{
-            $d['nilai_utama'] .= '<tr><td colspan="9"><b>PROGRAM UNGGULAN SEKOLAH</b></td></tr>';    
+            if (!$isK13) {
+                $d['nilai_utama'] .= '';
+            } else {
+                $d['nilai_utama'] .= '<tr><td colspan="9"><b>PROGRAM UNGGULAN SEKOLAH</b></td></tr>';
             }
             foreach ($q_mapel as $i => $m) {
                 $idx = $m['id'];
@@ -868,9 +873,9 @@ class Cetak_raport extends CI_Controller
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
                 }
-                if ($npa !== "-"){
-                if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-                $d['nilai_utama'] .= '
+                if ($npa !== "-") {
+                    if (!$isK13) {
+                        $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
                                         <td style="width:170px;">' . $m['nama'] . '</td>
@@ -878,8 +883,8 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }else{
-                $d['nilai_utama'] .= '
+                    } else {
+                        $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
                                         <td style="width:170px;">' . $m['nama'] . '</td>
@@ -889,8 +894,8 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }
-                $d['nilai_keterampilan'] .= '
+                    }
+                    $d['nilai_keterampilan'] .= '
                                     <tr>
                                         <td class="ctr">' . $noket++ . '</td>
                                         <td style="width:170px;">' . $m['nama'] . '</td>
@@ -903,10 +908,10 @@ class Cetak_raport extends CI_Controller
                 }
             }
         }
-        if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-        $d['nilai_utama'] .= '';
-        }else{
-        $d['nilai_utama'] .= '<tr><td class="ctr">' . $no . '</td><td colspan="8">Muatan Lokal</td></tr>';    
+        if (!$isK13) {
+            $d['nilai_utama'] .= '';
+        } else {
+            $d['nilai_utama'] .= '<tr><td class="ctr">' . $no . '</td><td colspan="8">Muatan Lokal</td></tr>';
         }
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
             INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
@@ -941,7 +946,7 @@ class Cetak_raport extends CI_Controller
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
 
-            if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
+            if (!$isK13) {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -950,7 +955,7 @@ class Cetak_raport extends CI_Controller
                                         <td colspan="2" style="width:265px; padding: 20px 10px;">' . $npd . '</td>
                                       
                                     </tr>';
-            }else{
+            } else {
                 $d['nilai_utama'] .= '
                                     <tr>
                                         <td class="ctr">' . $no++ . '</td>
@@ -984,9 +989,9 @@ class Cetak_raport extends CI_Controller
                                     FROM t_naikkelas a 
                                     WHERE a.id_siswa = $id_siswa AND a.ta = '$tasm'")->row_array();
         $d['catatan'] = $q_catatan;
-        if ($siswa['tingkat'] == '7' || $siswa['tingkat'] == '10' || $siswa['tingkat'] == '8' || $siswa['tingkat'] == '8' || $siswa['tingkat'] == '8' ){
+        if (!$isK13) {
             $this->load->view('cetak_ikm', $d);
-        }else{
+        } else {
             $this->load->view('cetak_rapot', $d);
         }
         $html = ob_get_contents();
@@ -999,9 +1004,9 @@ class Cetak_raport extends CI_Controller
         $pdf->encoding = 'UTF-8';
         $pdf->setTestTdInOnePage(false);
         $pdf->WriteHTML($html);
-        $nama_siswa = $d['det_siswa']['nama']??"--";
-        $nama_kelas = $d['wali_kelas']['nmkelas']??"--";
-        $pdf->Output($nama_siswa.'-'.$nama_kelas.'-'.$tasm.'.pdf');
+        $nama_siswa = $d['det_siswa']['nama'] ?? "--";
+        $nama_kelas = $d['wali_kelas']['nmkelas'] ?? "--";
+        $pdf->Output($nama_siswa . '-' . $nama_kelas . '-' . $tasm . '.pdf');
     }
     public function cetak_sd($id_siswa, $tasm)
     {
@@ -1150,7 +1155,6 @@ class Cetak_raport extends CI_Controller
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             }
-
         }
         //echo j($nilai_pengetahuan);
         $d['nilai_pengetahuan'] = $nilai_pengetahuan;
@@ -1774,7 +1778,7 @@ class Cetak_raport extends CI_Controller
         $pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array('7mm', '7mm', '10mm', '10mm'));
 
         $pdf->WriteHTML($html);
-        $pdf->Output($d['det_siswa']['nama'].'-'.$d['wali_kelas']['nmkelas'].'-'.$tasm.'.pdf');
+        $pdf->Output($d['det_siswa']['nama'] . '-' . $d['wali_kelas']['nmkelas'] . '-' . $tasm . '.pdf');
     }
     public function cetak_projek($id_siswa, $tasm)
     {
@@ -1835,12 +1839,20 @@ class Cetak_raport extends CI_Controller
         $noprojek = 1;
         $d['nama_projek'] = $ambil_np_projek;
         foreach ($ambil_np_projek as $i) {
-        $kelompokDescriptions = [
-                                    "PBMK"=>"Pendidikan yang Berkualitas dan Menurunnya Ketidaksetaraan","KABS"=>"Ketersediaan Air Bersih dan Sanitasi","GHB"=>"Gaya Hidup Berkelanjutan","KL"=>"Kearifan Lokal","BTI"=>"Bhineka Tunggal Ika","BJR"=>"Bangunlah Jiwa dan Raganya","SD"=>"Suara Demokrasi","BBMN"=>"Berekayasa dan Berteknologi untuk Membangun NKRI","KW"=>"Kewirausahaan"
-                                ];
-        $kelompok = $kelompokDescriptions[$i['kelompok']] ?? 'Unknown Kelompok';
-        
-        $d['projek'] .= '
+            $kelompokDescriptions = [
+                "PBMK" => "Pendidikan yang Berkualitas dan Menurunnya Ketidaksetaraan",
+                "KABS" => "Ketersediaan Air Bersih dan Sanitasi",
+                "GHB" => "Gaya Hidup Berkelanjutan",
+                "KL" => "Kearifan Lokal",
+                "BTI" => "Bhineka Tunggal Ika",
+                "BJR" => "Bangunlah Jiwa dan Raganya",
+                "SD" => "Suara Demokrasi",
+                "BBMN" => "Berekayasa dan Berteknologi untuk Membangun NKRI",
+                "KW" => "Kewirausahaan"
+            ];
+            $kelompok = $kelompokDescriptions[$i['kelompok']] ?? 'Unknown Kelompok';
+
+            $d['projek'] .= '
                                     <tr>
                                         <td style="width:610px; padding: 10px 10px;"><b> Projek ' . $noprojek++ . ' | ' . $kelompok . '<br>' . $i['nama'] . '</b></td>
                                     </tr>
@@ -1882,7 +1894,7 @@ class Cetak_raport extends CI_Controller
             $jumlah_n_h = 0;
 
             $desk = array();
-            
+
             if (!empty($array1[$k]['h'])) {
                 $arrayh = max($array1[$k]['h']);
                 $arrayhmin = min($array1[$k]['h']);
@@ -1920,7 +1932,7 @@ class Cetak_raport extends CI_Controller
             if ($tingkat == 1 || $tingkat == 2) {
                 $_np = round(($jumlah_n_h / $jumlah_h), 0);
             } else {
-            $_np = round((((2 * ($jumlah_n_h / $jumlah_h)) + $__tengah + $__akhir) / 4), 0);
+                $_np = round((((2 * ($jumlah_n_h / $jumlah_h)) + $__tengah + $__akhir) / 4), 0);
             }
 
             $nilai_pengetahuan[$k]['nilai'] = number_format($_np);
@@ -1930,16 +1942,15 @@ class Cetak_raport extends CI_Controller
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Ananda telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             }
-
         }
         //echo j($nilai_pengetahuan);
         $d['nilai_pengetahuan'] = $nilai_pengetahuan;
         // END Nilai PENGETAHUAN
 
-        
+
         // END Nilai PENGETAHUAN
 
-       
+
 
         //===========================================================================
         //              START NIlai Ekstrakurikuler
@@ -2019,10 +2030,10 @@ class Cetak_raport extends CI_Controller
                                     FROM t_naikkelas a 
                                     WHERE a.id_siswa = $id_siswa AND a.ta = '$tasm'")->row_array();
         $d['catatan'] = $q_catatan;
-        if ($siswa['tingkat'] == '1' || $siswa['tingkat'] == '4'){
-        $this->load->view('cetak_projek', $d);
-        }else{
-        $this->load->view('cetak_projek', $d);    
+        if ($siswa['tingkat'] == '1' || $siswa['tingkat'] == '4') {
+            $this->load->view('cetak_projek', $d);
+        } else {
+            $this->load->view('cetak_projek', $d);
         }
         $html = ob_get_contents();
         ob_end_clean();
@@ -2034,7 +2045,7 @@ class Cetak_raport extends CI_Controller
         $pdf->encoding = 'UTF-8';
         $pdf->setTestTdInOnePage(false);
         $pdf->WriteHTML($html);
-        $pdf->Output($d['det_siswa']['nama'].'-'.$d['wali_kelas']['nmkelas'].'-'.$tasm.'.pdf');
+        $pdf->Output($d['det_siswa']['nama'] . '-' . $d['wali_kelas']['nmkelas'] . '-' . $tasm . '.pdf');
     }
     public function cetak_tahfiz($id_siswa, $tasm)
     {
@@ -2226,13 +2237,12 @@ class Cetak_raport extends CI_Controller
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             }
-
         }
         //echo j($nilai_pengetahuan);
         $d['nilai_pengetahuan'] = $nilai_pengetahuan;
         // END Nilai PENGETAHUAN
 
-       
+
         //===========================================================================
         //              START NIlai Absensi
         //===========================================================================
@@ -2248,7 +2258,7 @@ class Cetak_raport extends CI_Controller
         $d['catatan_tahfiz'] = '';
         $d['sek'] = '';
         $d['fimo'] = '';
-        
+
         $d['kog'] = '';
         $d['bi'] = '';
         $d['nilai_keterampilan'] = '';
@@ -2263,15 +2273,15 @@ class Cetak_raport extends CI_Controller
         $arr_roman = array("I", "II", "III", "IV", "V");
         $no = 1;
         $noket = 0;
-        
+
         //no NNA
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
                                         INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
                                         INNER JOIN m_guru c ON b.id_guru = c.id
              WHERE kelompok = 'TAHFIZ' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' AND b.tasm= '" . $tasm . "' ORDER BY kkm ASC")->result_array();
-        
+
         foreach ($q_mapel as $i => $m) {
-            
+
             $kkmx = $m['kkm'];
 
             $idx = $m['id'];
@@ -2299,14 +2309,14 @@ class Cetak_raport extends CI_Controller
                             <td style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td></td>
                             </tr>';
-                } elseif ($aspect_array[0] == 3){
+                } elseif ($aspect_array[0] == 3) {
                     $d['nna'] .= '
                             <td></td>
                             <td style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td></td>
                             <td></td>
                             </tr>';
-                }else{
+                } else {
                     $d['nna'] .= '
                             <td style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td></td>
@@ -2314,20 +2324,16 @@ class Cetak_raport extends CI_Controller
                             <td></td>
                             </tr>';
                 }
-
             }
-
-        
-
         }
         //no SEK
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
                                         INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
                                         INNER JOIN m_guru c ON b.id_guru = c.id
              WHERE kelompok = 'SEK' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' ORDER BY kkm ASC")->result_array();
-        
+
         foreach ($q_mapel as $i => $m) {
-            
+
             $kkmx = $m['kkm'];
 
             $idx = $m['id'];
@@ -2352,14 +2358,14 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             </tr>';
-                } elseif ($aspect_array[0] == 3){
+                } elseif ($aspect_array[0] == 3) {
                     $d['sek'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td colspan="2"></td>
                             </tr>';
-                }else{
+                } else {
                     $d['sek'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
@@ -2367,18 +2373,16 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             </tr>';
                 }
-
             }
-
         }
         //no FIMO
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
                                         INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
                                         INNER JOIN m_guru c ON b.id_guru = c.id
              WHERE kelompok = 'FIMO' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' ORDER BY kkm ASC")->result_array();
-        
+
         foreach ($q_mapel as $i => $m) {
-            
+
             $kkmx = $m['kkm'];
 
             $idx = $m['id'];
@@ -2403,14 +2407,14 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             </tr>';
-                } elseif ($aspect_array[0] == 3){
+                } elseif ($aspect_array[0] == 3) {
                     $d['fimo'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td colspan="2"></td>
                             </tr>';
-                }else{
+                } else {
                     $d['fimo'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
@@ -2418,18 +2422,16 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             </tr>';
                 }
-
             }
-
         }
         //no KOG
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
                                         INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
                                         INNER JOIN m_guru c ON b.id_guru = c.id
              WHERE kelompok = 'KOG' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' ORDER BY kkm ASC")->result_array();
-        
+
         foreach ($q_mapel as $i => $m) {
-            
+
             $kkmx = $m['kkm'];
 
             $idx = $m['id'];
@@ -2454,14 +2456,14 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             </tr>';
-                } elseif ($aspect_array[0] == 3){
+                } elseif ($aspect_array[0] == 3) {
                     $d['kog'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td colspan="2"></td>
                             </tr>';
-                }else{
+                } else {
                     $d['kog'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
@@ -2469,39 +2471,37 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             </tr>';
                 }
-
             }
-
         }
         //no BI
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
                                         INNER JOIN t_guru_mapel b ON a.id = b.id_mapel
                                         INNER JOIN m_guru c ON b.id_guru = c.id
              WHERE kelompok = 'BI' AND tambahan_sub = 'NO' AND b.id_kelas= '" . $d['det_siswa']['idkelas'] . "' ORDER BY kkm ASC")->result_array();
-        
+
         foreach ($q_mapel as $i => $m) {
-            
+
             $kkmx = $m['kkm'];
 
             $idx = $m['id'];
-            if ($m['nama'] =='Memahami Bahasa'){
+            if ($m['nama'] == 'Memahami Bahasa') {
                 $d['bi'] .= '<tr>
                     <td colspan="10">Bahasa Indonesia</td>
                     </tr><tr>
                     <td colspan="10">' . $m['nama'] . '</td>
                     </tr>';
-            }elseif ($m['nama'] =='Understanding Language'){
-                 $d['bi'] .= '<tr>
+            } elseif ($m['nama'] == 'Understanding Language') {
+                $d['bi'] .= '<tr>
                     <td colspan="10">English</td>
                     </tr><tr>
                     <td colspan="10">' . $m['nama'] . '</td>
                     </tr>';
-            }else{
+            } else {
                 $d['bi'] .= '<tr>
                     <td colspan="10">' . $m['nama'] . '</td>
                     </tr>';
             }
-            
+
             foreach ($array1[$idx]['h'] as $aspect) {
                 $aspect_array = explode("//", $aspect);
                 $d['bi'] .= '<tr>
@@ -2520,14 +2520,14 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             </tr>';
-                } elseif ($aspect_array[0] == 3){
+                } elseif ($aspect_array[0] == 3) {
                     $d['bi'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             <td colspan="2"></td>
                             </tr>';
-                }else{
+                } else {
                     $d['bi'] .= '
                             <td colspan="2"></td>
                             <td colspan="2"></td>
@@ -2535,12 +2535,10 @@ class Cetak_raport extends CI_Controller
                             <td colspan="2" style="font-family:freeserif;text-align:center;">&#10004;</td>
                             </tr>';
                 }
-
             }
-
         }
 
-        
+
         $d['det_raport'] = $get_tasm = $this->db->query("SELECT tahun, nama_kepsek, nip_kepsek, tgl_raport, tgl_raport_kelas3 FROM tahun WHERE tahun = '$tasm'")->row_array();
 
         //utk naik kelas atau tidak
@@ -2561,7 +2559,7 @@ class Cetak_raport extends CI_Controller
         $pdf->encoding = 'UTF-8';
         $pdf->setTestTdInOnePage(false);
         $pdf->WriteHTML($html);
-        $pdf->Output($d['det_siswa']['nama'].'-'.$d['wali_kelas']['nmkelas'].'-'.$tasm.'.pdf');
+        $pdf->Output($d['det_siswa']['nama'] . '-' . $d['wali_kelas']['nmkelas'] . '-' . $tasm . '.pdf');
     }
     public function cetak_mh($id_siswa, $tasm)
     {
@@ -2572,7 +2570,7 @@ class Cetak_raport extends CI_Controller
         $d['semester'] = substr($tasm, 4, 1);
         $d['ta'] = (substr($tasm, 0, 4)) . "/" . (substr($tasm, 0, 4) + 1);
 
-$ta = substr($tasm, 0, 4);
+        $ta = substr($tasm, 0, 4);
         $siswa = $this->db->query("SELECT 
                                     a.nama, a.nis, a.nisn, c.tingkat, c.id idkelas
                                     FROM m_siswa a
@@ -2581,6 +2579,12 @@ $ta = substr($tasm, 0, 4);
                                     WHERE a.id = $id_siswa AND b.ta = '" . $d['ta'] . "'")->row_array();
 
         $d['det_siswa'] = $siswa;
+
+        //get template report
+        $d['det_raport'] = $this->db->query("SELECT * FROM tahun WHERE tahun = '$tasm'")->row();
+        $jenis_rapor = getJenisRaport($d['det_raport']->id, $d['det_siswa']['tingkat']);
+        $d['jenis_rapor'] = $jenis_rapor;
+        $isK13 = ($jenis_rapor->nama ?? "") === "K13" ? TRUE : FALSE;
 
         $d['wali_kelas'] = $this->db->query("SELECT 
                                 a.*, b.nama nmguru, b.nip, 
@@ -2653,13 +2657,13 @@ $ta = substr($tasm, 0, 4);
         }
         foreach ($ambil_uts as $a2) {
             $idx = $a2['idmapel'];
-            
+
             //$pc_nilai = explode("//", $a2['nilai']);
 
             if ($a2['jenis'] == "h") {
                 $array1[$idx]['h'][] = $a2['nilai'];
             } else if ($a2['jenis'] == "t") {
-                    $array1[$idx]['t'] = $a2['nilai'];
+                $array1[$idx]['t'] = $a2['nilai'];
             } else if ($a2['jenis'] == "a") {
                 $array1[$idx]['a'] = $a2['nilai'];
             } else if ($a2['jenis'] == "c") {
@@ -2743,7 +2747,6 @@ $ta = substr($tasm, 0, 4);
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             }
-
         }
         //echo j($nilai_pengetahuan);
         $d['nilai_pengetahuan'] = $nilai_pengetahuan;
@@ -2857,19 +2860,16 @@ $ta = substr($tasm, 0, 4);
             $idx = $a22['idmapel'];
             //$pc_nilai = explode("//", $a2['nilai']);
             $array2[$idx]['icb'][] = $a22['nilai'];
-
         }
         foreach ($ambil_pss as $a22) {
             $idx = $a22['idmapel'];
             //$pc_nilai = explode("//", $a2['nilai']);
             $array2[$idx]['pss'][] = $a22['nilai'];
-
         }
         foreach ($ambil_la as $a22) {
             $idx = $a22['idmapel'];
             //$pc_nilai = explode("//", $a2['nilai']);
             $array2[$idx]['la'][] = $a22['nilai'];
-
         }
         foreach ($ambil_nc as $a22) {
             $idx = $a22['idmapel'];
@@ -2926,19 +2926,16 @@ $ta = substr($tasm, 0, 4);
                 foreach ($array2[$k]['icb'] as $icb) {
                     $icb_aspect[$k]['aspect'][] = $icb;
                 }
-
             }
             if (!empty($array2[$k]['pss'])) {
                 foreach ($array2[$k]['pss'] as $pss) {
                     $pss_aspect[$k]['aspect'][] = $pss;
                 }
-
             }
             if (!empty($array2[$k]['la'])) {
                 foreach ($array2[$k]['la'] as $la) {
                     $la_aspect[$k]['aspect'][] = $la;
                 }
-
             }
 
 
@@ -3183,9 +3180,7 @@ $ta = substr($tasm, 0, 4);
                             <td style="text-align:center;">V</td>
                             </tr>';
                 }
-
             }
-
         }
         //no PSS
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
@@ -3221,9 +3216,7 @@ $ta = substr($tasm, 0, 4);
                             <td style="text-align:center;">V</td>
                             </tr>';
                 }
-
             }
-
         }
         //no LA
         $q_mapel = $this->db->query("SELECT a.id as id,kkm,a.nama as nama, c.nama as namaguru FROM m_mapel a
@@ -3259,9 +3252,7 @@ $ta = substr($tasm, 0, 4);
                             <td style="text-align:center;">V</td>
                             </tr>';
                 }
-
             }
-
         }
 
         //no pai kelompok A
@@ -3298,8 +3289,8 @@ $ta = substr($tasm, 0, 4);
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
-            if ($npa !== "-"){
-                if ($siswa['tingkat'] == '7' ||$siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
+            if ($npa !== "-") {
+                if (!$isK13) {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3336,7 +3327,7 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }else{
+                } else {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3376,7 +3367,6 @@ $ta = substr($tasm, 0, 4);
                                     </tr>
                                 </table>';
                 }
-            
             }
         }
 
@@ -3419,8 +3409,8 @@ $ta = substr($tasm, 0, 4);
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
-            if ($npa !== "-"){
-            if ($siswa['tingkat'] == '7' ||$siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
+            if ($npa !== "-") {
+                if (!$isK13) {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3457,7 +3447,7 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }else{
+                } else {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3539,9 +3529,9 @@ $ta = substr($tasm, 0, 4);
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
                 }
-                if ($npa !== "-"){
-                if ($siswa['tingkat'] == '7' ||$siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-                    $d['nilai_utama'] .= '
+                if ($npa !== "-") {
+                    if (!$isK13) {
+                        $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
                                         <td>
@@ -3577,8 +3567,8 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }else{
-                    $d['nilai_utama'] .= '
+                    } else {
+                        $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
                                         <td>
@@ -3616,7 +3606,7 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }
+                    }
                 }
             }
         }
@@ -3657,9 +3647,9 @@ $ta = substr($tasm, 0, 4);
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
                 }
-                if ($npa !== "-"){
-                if ($siswa['tingkat'] == '7' ||$siswa['tingkat'] == '10' || $siswa['tingkat'] == '8'){
-                    $d['nilai_utama'] .= '
+                if ($npa !== "-") {
+                    if (!$isK13) {
+                        $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
                                         <td>
@@ -3695,8 +3685,8 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }else{
-                    $d['nilai_utama'] .= '
+                    } else {
+                        $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
                                         <td>
@@ -3734,7 +3724,7 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }
+                    }
                 }
             }
         }
@@ -3772,8 +3762,8 @@ $ta = substr($tasm, 0, 4);
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
             }
-            if ($npa !== "-"){
-            if ($siswa['tingkat'] == '7' ||$siswa['tingkat'] == '10' || $siswa['tingkat'] == '8' || $siswa['tingkat'] == '8'){
+            if ($npa !== "-") {
+                if (!$isK13) {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3810,7 +3800,7 @@ $ta = substr($tasm, 0, 4);
                                         </td>
                                     </tr>
                                 </table>';
-                }else{
+                } else {
                     $d['nilai_utama'] .= '
                                     <table>
                                     <tr>
@@ -3880,9 +3870,9 @@ $ta = substr($tasm, 0, 4);
         $pdf->encoding = 'UTF-8';
         $pdf->setTestTdInOnePage(false);
         $pdf->WriteHTML($html);
-        $nama_siswa = $d['det_siswa']['nama']??"--";
-        $nama_kelas = $d['wali_kelas']['nmkelas']??"--";
-        $pdf->Output($nama_siswa.'-'.$nama_kelas.'-'.$tasm.'.pdf');
+        $nama_siswa = $d['det_siswa']['nama'] ?? "--";
+        $nama_kelas = $d['wali_kelas']['nmkelas'] ?? "--";
+        $pdf->Output($nama_siswa . '-' . $nama_kelas . '-' . $tasm . '.pdf');
     }
 
 
@@ -3892,13 +3882,501 @@ $ta = substr($tasm, 0, 4);
         $wali = $this->session->userdata($this->sespre . "walikelas");
 
         $this->d['siswa_kelas'] = $this->db->query("SELECT 
-                                                a.id_siswa, b.nama
+                                                a.id_siswa, b.nama, c.tingkat
                                                 FROM t_kelas_siswa a
                                                 INNER JOIN m_siswa b ON a.id_siswa = b.id
-                                                WHERE a.id_kelas = '" . $wali['id_walikelas'] . "' AND a.ta = '" . $this->d['ta'] . "'")->result_array();
-
+                                                INNER JOIN m_kelas c ON a.id_kelas = c.id
+                                                WHERE a.id_kelas = '" . $wali['id_walikelas'] . "' AND a.ta = '" . $this->d['ta'] . "' Order by b.nama ASC")->result_array();
+        foreach ($this->d['siswa_kelas'] as &$s) {
+            $rapor =  $this->db->query("SELECT * FROM t_rapor
+                                WHERE id_siswa = '" . $s['id_siswa'] . "'
+                                AND tingkat = '" . $s['tingkat'] . "'
+                                AND tahun = '" . $this->d['ta'] . "'
+                                AND semester = '" . $this->d['semester'] . "'
+                                AND jenis_rapor = 2
+                                ")->row();
+            $s['terkunci'] = isset($rapor) ? TRUE : FALSE;
+            $s['rapor_project'] = ($s['tingkat'] == '7' || $s['tingkat'] == '10' || $s['tingkat'] == '8' || $s['tingkat'] == '11');
+        }
         $this->d['p'] = "list";
         $this->load->view("template_utama", $this->d);
     }
 
+    public function kunci_rapor($id_siswa, $tasm)
+    {
+        $semester = substr($tasm, 4, 1);
+        $ta = (substr($tasm, 0, 4)) . "/" . (substr($tasm, 0, 4) + 1);
+        $tahun = substr($tasm, 0, 4);
+
+        $rapor = $this->db->get_where(
+            't_rapor',
+            [
+                'id_siswa' => $id_siswa,
+                'tahun' => $tahun,
+                'semester' => $semester,
+                'jenis_rapor' => 2, //final
+            ]
+        )->row();
+
+        if ($rapor) {
+            return false; //kunci
+        }
+
+        $siswa = siswa($id_siswa, $tahun); //get siswa
+        $wali_kelas = wali_kelas($siswa->id_kelas, $tahun); // get walikelas
+        $ta_active = ta_active($tasm); // get active kepsek
+        $absent = get_absent($id_siswa, $tasm); // get absent
+        $catatan_wali = get_catatan_naik_kelas($id_siswa, $tasm); // get catatan walikelas
+        $kl1 = get_capaianKl1($id_siswa, $tasm);
+        $kl2 = get_capaianKl2($id_siswa, $tasm);
+        $catatan_ht = catatan_homeroom($id_siswa, $tasm);
+        $kkm = get_kkm("t_nilai", $id_siswa, $tasm); // get list kkm
+
+        $d['det_raport'] = $this->db->query("SELECT * FROM tahun WHERE tahun = '$tasm'")->row();
+        $jenis_rapor = getJenisRaport($d['det_raport']->id, $siswa->tingkat);
+        $r = ($jenis_rapor->nama ?? "") == "K13" ? 2 : 1; // 1. kurmer, 2. k13
+
+        $d = [
+            "nama" => $siswa->nama,
+            "nis" => $siswa->nis,
+            "nisn" => $siswa->nisn,
+            "kelas" => $wali_kelas->nmkelas,
+            "tingkat" => $siswa->tingkat,
+            "semester" => $semester,
+            "tasm" => $ta,
+            "tahun" => $tahun,
+            "wali_kelas" => $wali_kelas->nmguru,
+            "kepala_sekolah" => $ta_active->nama_kepsek,
+            "tgl_rapor" => $ta_active->tgl_raport_kelas3,
+            "jenis_rapor" => 2, // 1.mid, 2.final
+            "tipe_rapor" => $r,
+            "sakit" => $absent->s,
+            "izin" => $absent->i,
+            "tanpa_ket" => $absent->a,
+            "naik" => $catatan_wali->naik,
+            "catatan_naik_kelas" => $catatan_wali->catatan_wali_final,
+            "catatan_ht" => $catatan_ht->catatan_final,
+            "capaian_kl1" => $kl1->capaian_final ?? "",
+            "catatan_kl1" => $kl1->catatan_final ?? "",
+            "capaian_kl2" => $kl2->capaian_final ?? "",
+            "catatan_kl2" => $kl2->catatan_final ?? "",
+            "kkm" => implode(', ', $kkm),
+        ];
+
+        $pengetahuan = $this->hitung_nilai_pengetahuan('t_nilai', $id_siswa, $tasm, $siswa->id_kelas);
+        $keterampilan = $this->hitung_nilai_keterampilan('t_nilai_ket', $id_siswa, $tasm, $siswa->id_kelas);
+        $catatan_mapel =  get_catatan_mapel($id_siswa, $tasm);
+
+        $obj_nilai = [];
+        foreach ($pengetahuan as $data) {
+            $nilai = [
+                "id_mapel" => $data['id_mapel'],
+                "mapel" => $data['mapel'],
+                "mapel_diknas" => $data['mapel_diknas'],
+                "kd_singkat" => $data['kd_singkat'],
+                "kelompok" => $data['kelompok'],
+                "kkm" => $data['kkm'],
+                "nama_guru" => $data['nama_guru'],
+                "nilai_pengetahuan" => $data['nilai'],
+                "predikat_pengetahuan" => $data['predikat'],
+                "desk_pengetahuan" => $data['desk'],
+            ];
+            $filterKeterampilan = array_filter($keterampilan, function ($ket) use ($data) {
+                return $ket['id_mapel'] == $data['id_mapel'];
+            });
+            $valueKeterampilan = array_values($filterKeterampilan);
+
+            if (!empty($valueKeterampilan)) {
+                $nilai['nilai_keterampilan'] = $valueKeterampilan[0]['nilai'];
+                $nilai['predikat_keterampilan'] = $valueKeterampilan[0]['predikat'];
+                $nilai['desk_keterampilan'] = $valueKeterampilan[0]['desk'];
+            }
+            $filterNilaiCatatan = array_filter($catatan_mapel, function ($cat) use ($data) {
+                return $cat['idmapel'] == $data['id_mapel'];
+            });
+            $valueCatatan = array_values($filterNilaiCatatan);
+            if (!empty($valueCatatan)) {
+                $nilai['nilai_catatan'] = $valueCatatan[0]['nilai'];
+            }
+            $obj_nilai[] = $nilai;
+        }
+
+
+        $e = $this->db->query("INSERT INTO t_rapor (id_siswa, nama,nis,nisn,kelas,tingkat,semester,tasm,tahun,wali_kelas,kepala_sekolah,
+                            tgl_rapor,jenis_rapor,tipe_rapor,sakit,izin,tanpa_ket,catatan_naik_kelas,catatan_ht,capaian_kl1,catatan_kl1,
+                            capaian_kl2,catatan_kl2,kkm) VALUES 
+                            ('" . $id_siswa . "','" . $d["nama"] . "','" . $d["nis"] . "','" . $d["nisn"] . "','" . $d["kelas"] . "',
+                            " . $d["tingkat"] . "," . $d["semester"] . ",'" . $d["tasm"] . "'," . $d["tahun"] . ",'" . $d["wali_kelas"] . "',
+                            '" . $d["kepala_sekolah"] . "','" . $d["tgl_rapor"] . "','" . $d["jenis_rapor"] . "','" . $d["tipe_rapor"] . "',
+                            " . $d["sakit"] . "," . $d["izin"] . "," . $d["tanpa_ket"] . ",'" . addslashes($d["catatan_naik_kelas"]) . "',
+                            '" . addslashes($d["catatan_ht"])  . "','" . addslashes($d["capaian_kl1"]) . "','" . addslashes($d["catatan_kl1"]) . "',
+                            '" . addslashes($d["capaian_kl2"]) . "','" . addslashes($d["catatan_kl2"]) . "','" . $d['kkm'] . "')");
+
+        if ($e) {
+            $id = $this->db->insert_id(); // get the last insert id
+
+            //insert nilai Pengetahuan/keterampilan/nilai catatan
+            foreach ($obj_nilai as $data) {
+                $_nilai_keterampilan = isset($data['nilai_keterampilan']) ? $data['nilai_keterampilan'] : 0;
+                $_predikat_keterampilan = isset($data['predikat_keterampilan']) ? $data['predikat_keterampilan'] : "";
+                $_desk_keterampilan = isset($data['desk_keterampilan']) ? $data['desk_keterampilan'] : "";
+
+                $this->db->query("INSERT INTO t_rapor_detail (id_rapor,id_mapel,mapel,
+                                    mapel_diknas,kd_singkat,kkm,nama_guru,nilai_pengetahuan,nilai_keterampilan,nilai_catatan,
+                                    predikat_pengetahuan,predikat_keterampilan,desk_pengetahuan,desk_keterampilan,kelompok) 
+                            VALUES ($id,'" . $data['id_mapel'] . "','" . $data['mapel'] . "','" . $data['mapel_diknas'] . "','" . $data['kd_singkat'] . "'
+                                    ,'" . $data['kkm'] . "','" . $data['nama_guru'] . "','" . $data['nilai_pengetahuan'] . "','" . $_nilai_keterampilan . "'
+                                    ,'" . addslashes($data['nilai_catatan'])  . "','" . $data['predikat_pengetahuan'] . "','" . $_predikat_keterampilan . "','" . addslashes($data['desk_pengetahuan']) . "'
+                                    ,'" . addslashes($_desk_keterampilan) . "','" . $data['kelompok'] . "')");
+            }
+
+            //inser icb,pss,la
+            insert_icb_pss_la($id_siswa, $tasm, "t_nilai_icb", $id, "final");
+            insert_icb_pss_la($id_siswa, $tasm, "t_nilai_pss", $id, "final");
+            insert_icb_pss_la($id_siswa, $tasm, "t_nilai_la", $id, "final");
+
+            //insert prestasi
+            $prestasi = get_prestasi($id_siswa, $tasm);
+            foreach ($prestasi as $val) {
+                $this->db->query("INSERT INTO t_rapor_prestasi (id_rapor,jenis,keterangan) 
+                            VALUES ($id,'" . $val["jenis"] . "','" . addslashes($val["keterangan"]) . "')");
+            }
+
+            //insert exschool
+            $exschool = get_exschool($id_siswa, $tasm);
+            foreach ($exschool as $val) {
+                $this->db->query("INSERT INTO t_rapor_exskul (id_rapor,nama,nilai,desk) 
+                            VALUES ($id,'" .  addslashes($val["nama"]) . "','" . $val['nilai'] . "','" . addslashes($val["desk"]) . "')");
+            }
+        }
+
+        redirect('cetak_raport');
+    }
+
+    function mapping_nilai($table, $id_siswa, $tasm)
+    {
+        $array1 = [];
+        $ambil_np_submp = get_nilai_sub($table, $id_siswa, $tasm);
+        $ambil_np = get_nilai_utama($table, $id_siswa, $tasm);
+        $ambil_uts = get_nilai_uts($table, $id_siswa, $tasm);
+
+        foreach ($ambil_np_submp as $a1) {
+            $mapel = $this->db->get_where('m_mapel', ['id' => $a1['id_mapel']])->row();
+            $data_nilai = [
+                'id_mapel' => $a1['id_mapel'],
+                'mapel' => $mapel->nama, //nama mapel
+                'mapel_diknas' => $mapel->nama, //nama mapel
+                'kelompok' => $mapel->kelompok, //nama mapel
+                'kd_singkat' => $a1['kd_singkat'],
+            ];
+            foreach ($ambil_np as $a2) {
+                $idx = $a2['idmapel'];
+                if ($idx == $a1['id_mapel']) {
+                    if ($a2['jenis'] == "a") {
+                        $data_nilai['a'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "t") {
+                        $data_nilai['t'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "c") {
+                        $data_nilai['c'] = $a2['catatan'];
+                    } else if ($a2['jenis'] == "h") {
+                        $data_nilai['h'][] = $a2['nilai'];
+                    }
+                }
+            }
+            foreach ($ambil_uts as $a2) {
+                $idx = $a2['idmapel'];
+                if ($idx == $a1['id_mapel']) {
+                    if ($a2['jenis'] == "a") {
+                        $data_nilai['a'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "t") {
+                        $data_nilai['t'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "c") {
+                        $data_nilai['c'] = $a2['catatan'];
+                    } else if ($a2['jenis'] == "h") {
+                        $data_nilai['h'][] = $a2['nilai'];
+                    }
+                }
+            }
+            $array1[] = $data_nilai;
+        }
+        return $array1;
+    }
+    function hitung_nilai_pengetahuan($table, $id_siswa, $tasm, $id_kelas)
+    {
+        $ambil_np = get_nilai_utama($table, $id_siswa, $tasm);
+        $array1 = $this->mapping_nilai($table, $id_siswa, $tasm);
+        $nilai_pengetahuan = [];
+        foreach ($ambil_np as $a2) {
+            $kkmx = $a2['kkm'];
+            $lang_mapel = $a2['lang'];
+        }
+        foreach ($array1 as $k) {
+
+            $jumlah_h = !empty($k['h']) ? sizeof($k['h']) : 0;
+            $jumlah_n_h = 0;
+
+            $desk = array();
+
+            if (!empty($k['h'])) {
+                $arrayh = max($k['h']);
+                $arrayhmin = min($k['h']);
+                $pc_nilai_hmin = explode("//", $arrayhmin);
+                $pc_nilai_h = explode("//", $arrayh);
+                $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
+                $do = do_lang($kkmx, $pc_nilai_h[0]);
+                if ($lang_mapel == "eng") {
+
+                    $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
+                    $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
+                    $desk[$_desk1][] = $pc_nilai_hmin[1];
+                } else {
+                    $_desk1 = 'Akan tetapi, kamu harus tetap belajar dan banyak latihan di rumah untuk';
+                    $desk[$pc_nilai_h[1]][] = "dengan " . $_desk;
+                    $desk[$_desk1][] = $pc_nilai_hmin[1];
+                }
+                foreach ($k['h'] as $j) {
+                    $pc_nilai_h = explode("//", $j);
+                    $jumlah_n_h += $pc_nilai_h[0];
+                }
+            } else {
+                //biar ndak division by zero
+                $jumlah_n_h = 0;
+                $jumlah_h = 1;
+            }
+            $txt_desk = array();
+            foreach ($desk as $r => $s) {
+                $txt_desk[] = $r . " " . implode(", ", $s);
+            }
+
+            $__tengah = empty($k['t']) ? 0 : $k['t'];
+            $__akhir = empty($k['a']) ? 0 : $k['a'];
+
+            $_np = round((((2 * ($jumlah_n_h / $jumlah_h)) + $__tengah + $__akhir) / 4), 0);
+            $guru_mapel = get_guru_mapel($k['id_mapel'], $id_kelas, $tasm);
+            $pengetahuan = [
+                'id_mapel' => $k['id_mapel'],
+                'nama_guru' => $guru_mapel->namaguru,
+                'mapel' => $k['mapel'],
+                'mapel_diknas' => $k['mapel_diknas'],
+                'kelompok' => $k['kelompok'],
+                'kd_singkat' => $k['kd_singkat'],
+                'nilai' => number_format($_np),
+                'predikat' => nilai_huruf($kkmx, $_np),
+                'kkm' => $kkmx,
+                "tipe" => 1, // 1. Pengetahuan 2. Keterampilan
+
+            ];
+            if ($lang_mapel == 'eng') {
+                $pengetahuan['desk'] =  empty($k['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
+            } else {
+                $pengetahuan['desk'] =  empty($k['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
+            }
+            $nilai_pengetahuan[] = $pengetahuan;
+        }
+
+        // echo json_encode($nilai_pengetahuan);
+        return $nilai_pengetahuan;
+    }
+    function mapping_nilai_keterampilan($table, $id_siswa, $tasm)
+    {
+        $array1 = [];
+        $ambil_np_submp = get_nilai_sub($table, $id_siswa, $tasm);
+        $ambil_np = get_nilai_utama($table, $id_siswa, $tasm);
+        $ambil_uts = get_nilai_uts($table, $id_siswa, $tasm,);
+
+        foreach ($ambil_np_submp as $a1) {
+            $mapel = $this->db->get_where('m_mapel', ['id' => $a1['id_mapel']])->row();
+            $data_nilai = [
+                'id_mapel' => $a1['id_mapel'],
+                'mapel' => $mapel->nama, //nama mapel
+                'mapel_diknas' => $mapel->nama_diknas, //nama mapel
+                'kd_singkat' => $a1['kd_singkat'],
+            ];
+            foreach ($ambil_np as $a2) {
+                $idx = $a2['idmapel'];
+                if ($idx == $a1['id_mapel']) {
+                    if ($a2['jenis'] == "a") {
+                        $data_nilai['a'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "t") {
+                        $data_nilai['t'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "c") {
+                        $data_nilai['c'] = $a2['catatan'];
+                    } else if ($a2['jenis'] == "p") {
+                        $data_nilai['p'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "h") {
+                        $data_nilai['h'][] = $a2['nilai'];
+                    }
+                }
+            }
+            foreach ($ambil_uts as $a2) {
+                $idx = $a2['idmapel'];
+                if ($idx == $a1['id_mapel']) {
+                    if ($a2['jenis'] == "a") {
+                        $data_nilai['a'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "t") {
+                        $data_nilai['t'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "c") {
+                        $data_nilai['c'] = $a2['catatan'];
+                    } else if ($a2['jenis'] == "p") {
+                        $data_nilai['p'] = $a2['nilai'];
+                    } else if ($a2['jenis'] == "h") {
+                        $data_nilai['h'][] = $a2['nilai'];
+                    }
+                }
+            }
+            $array1[] = $data_nilai;
+        }
+        return $array1;
+    }
+
+    function hitung_nilai_keterampilan($table, $id_siswa, $tasm, $id_kelas)
+    {
+        $ambil_np = get_nilai_utama('t_nilai', $id_siswa, $tasm);
+        foreach ($ambil_np as $a2) {
+            $kkmx = $a2['kkm'];
+            $lang_mapel = $a2['lang'];
+        }
+        $array2 = $this->mapping_nilai_keterampilan($table, $id_siswa, $tasm);
+        $nilai_keterampilan = array();
+        foreach ($array2 as $k) {
+            $jumlah_array_nilai = !empty($k['h']) ? sizeof($k['h']) : 0;
+            $jumlah_nilai = 0;
+
+            $desk = array();
+            if (!empty($k['h'])) {
+                $arrayh = max($k['h']);
+                $arrayhmin = min($k['h']);
+                $pc_nilai_hmin = explode("//", $arrayhmin);
+                $pc_nilai_h = explode("//", $arrayh);
+                $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
+                $do = do_lang($kkmx, $pc_nilai_h[0]);
+                if ($lang_mapel == "eng") {
+                    $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
+                    $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
+                    $desk[$_desk1][] = $pc_nilai_hmin[1];
+                } else {
+                    $_desk1 = 'Akan tetapi, kamu harus tetap belajar dan banyak latihan di rumah untuk';
+                    $desk[$pc_nilai_h[1]][] = "dengan " . $_desk;
+                    $desk[$_desk1][] = $pc_nilai_hmin[1];
+                }
+                foreach ($k['h'] as $j) {
+                    $pc_nilai_h = explode("//", $j);
+                    $jumlah_nilai += $pc_nilai_h[0];
+                }
+            } else {
+                //biar ndak division by zero
+                $jumlah_array_nilai = 1;
+                $jumlah_nilai = 1;
+            }
+            $txt_desk = array();
+            foreach ($desk as $r => $s) {
+                $txt_desk[] = $r . " " . implode(", ", $s);
+            }
+            $__tengah = empty($k['t']) ? 0 : $k['t'];
+            $__akhir = empty($k['a']) ? 0 : $k['a'];
+            $__praktik = empty($k['p']) ? 0 : $k['p'];
+            $jumlah_array_nilai += 1;
+            $_nilai_keterampilan = round((((2 * (($__praktik + $jumlah_nilai) / $jumlah_array_nilai)) + $__tengah + $__akhir) / 4), 0);
+            // $nilai_keterampilan[$k]['nilai'] = number_format($_nilai_keterampilan);
+            // $nilai_keterampilan[$k]['predikat'] = nilai_huruf($kkmx, $_nilai_keterampilan);
+            $guru_mapel = get_guru_mapel($k['id_mapel'], $id_kelas, $tasm);
+            $keterampilan = [
+                'id_mapel' => $k['id_mapel'],
+                'nama_guru' => $guru_mapel->namaguru,
+                'mapel' => $k['mapel'],
+                'mapel_diknas' => $k['mapel_diknas'],
+                'kd_singkat' => $k['kd_singkat'],
+                'nilai' => number_format($_nilai_keterampilan),
+                'kkm' => $kkmx,
+                'predikat' => nilai_huruf($kkmx, $_nilai_keterampilan),
+                "tipe" => 2, // 1. pengetauan 2. keterampilan
+            ];
+            if ($lang_mapel == 'eng') {
+                $keterampilan['desk'] = empty($k['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
+            } else {
+                $keterampilan['desk'] = empty($k['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
+            }
+            $nilai_keterampilan[] = $keterampilan;
+        }
+
+        // echo json_encode($nilai_keterampilan);
+        return $nilai_keterampilan;
+    }
+
+    function diknas($id_siswa, $tasm)
+    {
+        ob_start();
+        $tahun = substr($tasm, 0, 4);
+        $semester = substr($tasm, -1);
+        $rapor = $this->db->query("SELECT * FROM t_rapor WHERE id_siswa = $id_siswa and tahun = $tahun and semester =$semester")->row();
+
+        if (isset($rapor)) {
+            $rapor_detail       = $this->db->query("SELECT * FROM t_rapor_detail WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_exschool     = $this->db->query("SELECT * FROM t_rapor_exskul WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_prestasi     = $this->db->query("SELECT * FROM t_rapor_prestasi WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_characters   = $this->db->query("SELECT * FROM t_raport_character WHERE id_rapor = $rapor->id")->result_array();
+
+            $rapor->details     = $rapor_detail;
+            $rapor->exschool    = $rapor_exschool;
+            $rapor->prestasi    = $rapor_prestasi;
+            $rapor->characters  = $rapor_characters;
+
+            //1 = kurmer, 2 = K13
+            if ($rapor->tipe_rapor == 2) {
+                $this->load->view('cetak_fix_diknas', $rapor);
+            } else {
+                $this->load->view('cetak_fix_diknas_ikm', $rapor);
+            }
+        }
+
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        require './aset/html2pdf/autoload.php';
+
+        $pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array('7mm', '7mm', '10mm', '10mm'));
+        $str = utf8_decode($html);
+        $pdf->encoding = 'UTF-8';
+        $pdf->setTestTdInOnePage(false);
+        $pdf->WriteHTML($html);
+        $nama_siswa = $rapor->nama ?? "--";
+        $nama_kelas = $rapor->kelas ?? "--";
+        $pdf->Output($nama_siswa . '-' . $nama_kelas . '-' . $tasm . '.pdf');
+    }
+    function mhis($id_siswa, $tasm)
+    {
+        ob_start();
+        $tahun = substr($tasm, 0, 4);
+        $semester = substr($tasm, -1);
+        $rapor = $this->db->query("SELECT * FROM t_rapor WHERE id_siswa = $id_siswa and tahun = $tahun and semester =$semester")->row();
+
+        if (isset($rapor)) {
+            $rapor_detail       = $this->db->query("SELECT * FROM t_rapor_detail WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_exschool     = $this->db->query("SELECT * FROM t_rapor_exskul WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_prestasi     = $this->db->query("SELECT * FROM t_rapor_prestasi WHERE id_rapor = $rapor->id")->result_array();
+            $rapor_characters   = $this->db->query("SELECT * FROM t_raport_character WHERE id_rapor = $rapor->id")->result_array();
+
+            $rapor->details     = $rapor_detail;
+            $rapor->exschool    = $rapor_exschool;
+            $rapor->prestasi    = $rapor_prestasi;
+            $rapor->characters  = $rapor_characters;
+
+            //1 = kurmer, 2 = K13
+            $this->load->view('cetak_fix_mh', $rapor);
+        }
+
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        require './aset/html2pdf/autoload.php';
+
+        $pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array('7mm', '7mm', '10mm', '10mm'));
+        $str = utf8_decode($html);
+        $pdf->encoding = 'UTF-8';
+        $pdf->setTestTdInOnePage(false);
+        $pdf->WriteHTML($html);
+        $nama_siswa = $rapor->nama ?? "--";
+        $nama_kelas = $rapor->kelas ?? "--";
+        $pdf->Output($nama_siswa . '-' . $nama_kelas . '-' . $tasm . '.pdf');
+    }
 }
