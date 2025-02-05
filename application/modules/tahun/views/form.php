@@ -237,9 +237,9 @@
                     return false;
                 }
                 noti("success", r.data);
-                // setTimeout(() => {
-                //     window.location.href = base_url + "<?php echo $url; ?>"
-                // }, 2000);
+                setTimeout(() => {
+                    window.location.href = base_url + "<?php echo $url; ?>"
+                }, 2000);
             },
             error: function(r) {
                 $('input, button').attr('disabled', false);
