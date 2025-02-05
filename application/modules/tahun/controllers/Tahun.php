@@ -215,7 +215,7 @@ class Tahun extends CI_Controller
                 $id = $this->db->insert_id();
                 foreach ($p['templates'] as $temp) {
                     $this->db->query("INSERT INTO t_tahun_jenis_rapor (id_tahun, id_jenis_rapor, nama, tingkat, tasm)
-                            VALUES ($id,'" . $temp['idJenisRapor'] . "','" . $temp['nama'] . "','" . $temp['tingkat'] . "','" . $p['tahun'] . $p['semester'] . "')");
+                            VALUES ($id,'" . $temp['id_jenis_rapor'] . "','" . $temp['nama'] . "','" . $temp['tingkat'] . "','" . $p['tahun'] . $p['semester'] . "')");
                 }
                 $d['status'] = "ok";
                 $d['data'] = "Data berhasil disimpan";
