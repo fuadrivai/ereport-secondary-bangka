@@ -287,6 +287,7 @@
 
     <!-- end rapor -->
     <br><br>
+    <br>
     <table>
         <tr>
             <td><b>ISLAMIC CHARACTER BUILDING</b></td>
