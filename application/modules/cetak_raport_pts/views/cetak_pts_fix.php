@@ -46,7 +46,7 @@
     <table>
         <tr>
             <td>
-                <img src="https://report.mhis.link/images/Logo-MH-Transparan-01.png" width="130" style="margin-left:20px">
+                <img src="https://report.mhis.link/images/Logo-MH-Transparan-01.png" width="150" style="margin-left:20px">
             </td>
             <td>
                 <h3 style="text-align: center;"><b>MUTIARA HARAPAN ISLAMIC SCHOOL SECONDARY<br>
