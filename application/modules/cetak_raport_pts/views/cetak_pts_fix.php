@@ -286,6 +286,7 @@
     <?php } ?>
 
     <!-- end rapor -->
+    <br><br>
     <table>
         <tr>
             <td><b>ISLAMIC CHARACTER BUILDING</b></td>
