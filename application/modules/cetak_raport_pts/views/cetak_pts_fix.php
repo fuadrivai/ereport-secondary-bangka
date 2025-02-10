@@ -1,5 +1,5 @@
 <page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
-    <page_footer backbottom="2mm">
+    <!-- <page_footer backbottom="2mm">
         <table>
             <tr>
                 <td style="width:50px"></td>
@@ -11,7 +11,7 @@
                 <td style="width:50px;height:20px" colspan="3"></td>
             </tr>
         </table>
-    </page_footer>
+    </page_footer> -->
     <style type="text/css">
         body {
             font-family: arial;
