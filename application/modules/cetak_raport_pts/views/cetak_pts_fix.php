@@ -1,4 +1,4 @@
-<page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
+<page backtop="7mm" backbottom="7mm" backleft="10mm" backright="10mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
     <style type="text/css">
         body {
             font-family: arial;
