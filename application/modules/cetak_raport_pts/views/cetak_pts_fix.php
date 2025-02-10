@@ -253,7 +253,7 @@
         <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
         <table>
             <tr>
-                <td style="width:640px;padding: 10px 5px;text-align: justify;"><?= isset($catatan_homeroom['catatan_mid']) ? $catatan_homeroom['catatan_mid'] : "-"; ?></td>
+                <td style="width:640px;padding: 10px 5px;text-align: justify;"><?= isset($catatan_ht) ? $catatan_ht : "-"; ?></td>
             </tr>
         </table>
         <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
