@@ -88,16 +88,22 @@
     </table>
     <br>
     <br>
-    <!-- start rapor -->
-    <?php foreach ($details as $val) { ?>
+    <?php $no = 1 ?>
+    <?php
+    $filterA = array_filter($details, function ($ket) {
+        return $ket['kelompok'] == "A";
+    });
+    $kelompokA = array_values($filterA);
+    ?>
+    <?php foreach ($kelompokA as $kelA) { ?>
         <table>
             <tr>
                 <td>
                     <table style="font-weight: bold;">
                         <tr>
                             <td></td>
-                            <td style="width:400px;color:#0162b1;"><?= $val['mapel'] ?></td>
-                            <td style="width:250px;text-align: right">Teacher: <?= $val['nama_guru'] ?></td>
+                            <td style="width:400px;color:#0162b1;"><?= $kelA['mapel'] ?></td>
+                            <td style="width:250px;text-align: right">Teacher: <?= $kelA['nama_guru'] ?></td>
                         </tr>
                     </table>
                     <table class="table" style="text-align: center;">
@@ -111,10 +117,10 @@
                             <?php } ?>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding: 20px 10px;"><?= $val['kkm'] ?></td>
-                            <td style="padding: 20px 10px;"><?= $val['nilai_pengetahuan'] ?></td>
+                            <td colspan="2" style="padding: 20px 10px;"><?= $kelA['kkm'] ?></td>
+                            <td style="padding: 20px 10px;"><?= $kelA['nilai_pengetahuan'] ?></td>
                             <?php if ($tipe_rapor == 2) { ?>
-                                <td style="padding: 20px 10px;"><?= $val['nilai_keterampilan'] ?></td>
+                                <td style="padding: 20px 10px;"><?= $kelA['nilai_keterampilan'] ?></td>
                             <?php } ?>
                         </tr>
                     </table>
@@ -126,14 +132,172 @@
                         <tr>
                             <td></td>
                             <td style="width:650px;text-align: justify;text-justify: inter-word;">
-                                <?= $val['nilai_catatan'] ?>
+                                <?= $kelA['nilai_catatan'] ?>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
+        <?php $no++; ?>
     <?php } ?>
+    <?php
+    $filterB = array_filter($details, function ($ket) {
+        return $ket['kelompok'] == "B";
+    });
+    $kelompokB = array_values($filterB);
+    ?>
+    <?php foreach ($kelompokB as $kelB) { ?>
+        <table>
+            <tr>
+                <td>
+                    <table style="font-weight: bold;">
+                        <tr>
+                            <td></td>
+                            <td style="width:400px;color:#0162b1;"><?= $kelB['mapel'] ?></td>
+                            <td style="width:250px;text-align: right">Teacher: <?= $kelB['nama_guru'] ?></td>
+                        </tr>
+                    </table>
+                    <table class="table" style="text-align: center;">
+                        <tr style="color:#0162b1;font-weight: bold;">
+                            <td colspan="2" style="width:100px;padding: 20px 10px;">Passing Grade</td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="width:100px;padding: 20px 10px;">Knowledge Grade</td>
+                                <td style="width:100px;padding: 20px 10px;">Skill Grade</td>
+                            <?php } else { ?>
+                                <td style="width:100px;padding: 20px 10px;">Student Score</td>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 20px 10px;"><?= $kelB['kkm'] ?></td>
+                            <td style="padding: 20px 10px;"><?= $kelB['nilai_pengetahuan'] ?></td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="padding: 20px 10px;"><?= $kelB['nilai_keterampilan'] ?></td>
+                            <?php } ?>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>Comment:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                                <?= $kelB['nilai_catatan'] ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <?php $no++; ?>
+    <?php } ?>
+    <?php
+    $filterC = array_filter($details, function ($ket) {
+        return $ket['kelompok'] == "C";
+    });
+    $kelompokC = array_values($filterC);
+    ?>
+    <?php foreach ($kelompokC as $kelC) { ?>
+        <table>
+            <tr>
+                <td>
+                    <table style="font-weight: bold;">
+                        <tr>
+                            <td></td>
+                            <td style="width:400px;color:#0162b1;"><?= $kelC['mapel'] ?></td>
+                            <td style="width:250px;text-align: right">Teacher: <?= $kelC['nama_guru'] ?></td>
+                        </tr>
+                    </table>
+                    <table class="table" style="text-align: center;">
+                        <tr style="color:#0162b1;font-weight: bold;">
+                            <td colspan="2" style="width:100px;padding: 20px 10px;">Passing Grade</td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="width:100px;padding: 20px 10px;">Knowledge Grade</td>
+                                <td style="width:100px;padding: 20px 10px;">Skill Grade</td>
+                            <?php } else { ?>
+                                <td style="width:100px;padding: 20px 10px;">Student Score</td>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 20px 10px;"><?= $kelC['kkm'] ?></td>
+                            <td style="padding: 20px 10px;"><?= $kelC['nilai_pengetahuan'] ?></td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="padding: 20px 10px;"><?= $kelC['nilai_keterampilan'] ?></td>
+                            <?php } ?>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>Comment:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                                <?= $kelC['nilai_catatan'] ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <?php $no++; ?>
+    <?php } ?>
+    <?php
+    $filterMulok = array_filter($details, function ($ket) {
+        return $ket['kelompok'] == "MULOK";
+    });
+    $kelompokMulok = array_values($filterMulok);
+    ?>
+    <?php foreach ($kelompokMulok as $kelMulok) { ?>
+        <table>
+            <tr>
+                <td>
+                    <table style="font-weight: bold;">
+                        <tr>
+                            <td></td>
+                            <td style="width:400px;color:#0162b1;"><?= $kelMulok['mapel'] ?></td>
+                            <td style="width:250px;text-align: right">Teacher: <?= $kelMulok['nama_guru'] ?></td>
+                        </tr>
+                    </table>
+                    <table class="table" style="text-align: center;">
+                        <tr style="color:#0162b1;font-weight: bold;">
+                            <td colspan="2" style="width:100px;padding: 20px 10px;">Passing Grade</td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="width:100px;padding: 20px 10px;">Knowledge Grade</td>
+                                <td style="width:100px;padding: 20px 10px;">Skill Grade</td>
+                            <?php } else { ?>
+                                <td style="width:100px;padding: 20px 10px;">Student Score</td>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 20px 10px;"><?= $kelMulok['kkm'] ?></td>
+                            <td style="padding: 20px 10px;"><?= $kelMulok['nilai_pengetahuan'] ?></td>
+                            <?php if ($tipe_rapor == 2) { ?>
+                                <td style="padding: 20px 10px;"><?= $kelMulok['nilai_keterampilan'] ?></td>
+                            <?php } ?>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>Comment:</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                                <?= $kelMulok['nilai_catatan'] ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <?php $no++; ?>
+    <?php } ?>
+
     <!-- end rapor -->
     <page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
         <page_footer backbottom="2mm">
