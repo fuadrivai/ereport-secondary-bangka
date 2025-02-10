@@ -234,7 +234,7 @@
     <?php } ?>
     <?php
     $filterMulok = array_filter($details, function ($ket) {
-        return $ket['kelompok'] == "MULOK";
+        return $ket['kelompok'] == "MULOK" && $ket['kd_singkat'] != "BTQ";
     });
     $kelompokMulok = array_values($filterMulok);
     ?>
@@ -286,7 +286,7 @@
     <?php } ?>
 
     <!-- end rapor -->
-    <page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
+    <page backtop="7mm" backbottom="7mm" backleft="10mm" backright="10mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
         <br><br>
         <table>
             <tr>
