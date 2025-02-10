@@ -286,136 +286,134 @@
     <?php } ?>
 
     <!-- end rapor -->
-    <page backtop="7mm" backbottom="7mm" backleft="10mm" backright="10mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
-        <br><br>
-        <table>
+    <table>
+        <tr>
+            <td><b>ISLAMIC CHARACTER BUILDING</b></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr style="font-weight: bold;text-align: center;">
+            <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
+            <td style="width:50px;padding: 10px 5px;">VG</td>
+            <td style="width:50px;padding: 10px 5px;">G</td>
+            <td style="width:50px;padding: 10px 5px;">NI</td>
+        </tr>
+        <?php
+        $filterCharacter = array_filter($characters, function ($ket) {
+            return $ket['kd_singkat'] == "ICB";
+        });
+        $chars = array_values($filterCharacter);
+        ?>
+
+        <?php foreach ($chars as $char) { ?>
             <tr>
-                <td><b>ISLAMIC CHARACTER BUILDING</b></td>
+                <td><?= $char['nama_kd'] ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
             </tr>
-        </table>
-        <table class="table">
-            <tr style="font-weight: bold;text-align: center;">
-                <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
-                <td style="width:50px;padding: 10px 5px;">VG</td>
-                <td style="width:50px;padding: 10px 5px;">G</td>
-                <td style="width:50px;padding: 10px 5px;">NI</td>
-            </tr>
-            <?php
-            $filterCharacter = array_filter($characters, function ($ket) {
-                return $ket['kd_singkat'] == "ICB";
-            });
-            $chars = array_values($filterCharacter);
-            ?>
+        <?php } ?>
+    </table>
+    <br><br>
+    <table>
+        <tr>
+            <td><b>PERSONAL AND SOCIAL SKILLS</b></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr style="font-weight: bold;text-align: center;">
+            <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
+            <td style="width:50px;padding: 10px 5px;">VG</td>
+            <td style="width:50px;padding: 10px 5px;">G</td>
+            <td style="width:50px;padding: 10px 5px;">NI</td>
+        </tr>
+        <?php
+        $filterCharacter = array_filter($characters, function ($ket) {
+            return $ket['kd_singkat'] == "PSS";
+        });
+        $chars = array_values($filterCharacter);
+        ?>
 
-            <?php foreach ($chars as $char) { ?>
-                <tr>
-                    <td><?= $char['nama_kd'] ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
-                </tr>
-            <?php } ?>
-        </table>
-        <br><br>
-        <table>
+        <?php foreach ($chars as $char) { ?>
             <tr>
-                <td><b>PERSONAL AND SOCIAL SKILLS</b></td>
+                <td><?= $char['nama_kd'] ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
             </tr>
-        </table>
-        <table class="table">
-            <tr style="font-weight: bold;text-align: center;">
-                <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
-                <td style="width:50px;padding: 10px 5px;">VG</td>
-                <td style="width:50px;padding: 10px 5px;">G</td>
-                <td style="width:50px;padding: 10px 5px;">NI</td>
-            </tr>
-            <?php
-            $filterCharacter = array_filter($characters, function ($ket) {
-                return $ket['kd_singkat'] == "PSS";
-            });
-            $chars = array_values($filterCharacter);
-            ?>
+        <?php } ?>
+    </table>
+    <br><br>
+    <table>
+        <tr>
+            <td><b>LEARNING ATTITUDES</b></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr style="font-weight: bold;text-align: center;">
+            <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
+            <td style="width:50px;padding: 10px 5px;">VG</td>
+            <td style="width:50px;padding: 10px 5px;">G</td>
+            <td style="width:50px;padding: 10px 5px;">NI</td>
+        </tr>
+        <?php
+        $filterCharacter = array_filter($characters, function ($ket) {
+            return $ket['kd_singkat'] == "LA";
+        });
+        $chars = array_values($filterCharacter);
+        ?>
 
-            <?php foreach ($chars as $char) { ?>
-                <tr>
-                    <td><?= $char['nama_kd'] ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
-                </tr>
-            <?php } ?>
-        </table>
-        <br><br>
-        <table>
+        <?php foreach ($chars as $char) { ?>
             <tr>
-                <td><b>LEARNING ATTITUDES</b></td>
+                <td><?= $char['nama_kd'] ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
+                <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
             </tr>
-        </table>
-        <table class="table">
-            <tr style="font-weight: bold;text-align: center;">
-                <td style="width:420px;padding: 10px 5px;">Key Performance Indicator</td>
-                <td style="width:50px;padding: 10px 5px;">VG</td>
-                <td style="width:50px;padding: 10px 5px;">G</td>
-                <td style="width:50px;padding: 10px 5px;">NI</td>
-            </tr>
-            <?php
-            $filterCharacter = array_filter($characters, function ($ket) {
-                return $ket['kd_singkat'] == "LA";
-            });
-            $chars = array_values($filterCharacter);
-            ?>
+        <?php } ?>
+    </table>
+    <br><br>
+    <table class="table">
+        <tr style="font-weight: bold;text-align: center;">
+            <td style="width:190px;padding: 10px 5px;">NI : Needs Improvement</td>
+            <td style="width:190px;padding: 10px 5px;">VG : Very Good</td>
+            <td style="width:190px;padding: 10px 5px;">G : Good</td>
+        </tr>
+    </table>
+    <br><br>
+    <table>
+        <tr style="font-weight: bold; font-size:18px;">
+            <td style="width:660px;padding: 10px 5px;">Homeroom Teacher Comments</td>
+        </tr>
+    </table>
+    <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
+    <table>
+        <tr>
+            <td style="width:640px;padding: 10px 5px;text-align: justify;"><?= isset($catatan_ht) ? $catatan_ht : "-"; ?></td>
+        </tr>
+    </table>
+    <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
+    <br><br>
+    <table>
+        <tr>
+            <td style="width:450px">
+                MUTIARA HARAPAN ISLAMIC SCHOOL<br>
+                <?php echo $this->config->item('kota'); ?>, <?php echo tjs($tgl_rapor, "l"); ?><br>
 
-            <?php foreach ($chars as $char) { ?>
-                <tr>
-                    <td><?= $char['nama_kd'] ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 3 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 2 ? "V" : "" ?></td>
-                    <td style="text-align: center;"><?= $char['nilai'] == 1 ? "V" : "" ?></td>
-                </tr>
-            <?php } ?>
-        </table>
-        <br><br>
-        <table class="table">
-            <tr style="font-weight: bold;text-align: center;">
-                <td style="width:190px;padding: 10px 5px;">NI : Needs Improvement</td>
-                <td style="width:190px;padding: 10px 5px;">VG : Very Good</td>
-                <td style="width:190px;padding: 10px 5px;">G : Good</td>
-            </tr>
-        </table>
-        <br><br>
-        <table>
-            <tr style="font-weight: bold; font-size:18px;">
-                <td style="width:660px;padding: 10px 5px;">Homeroom Teacher Comments</td>
-            </tr>
-        </table>
-        <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
-        <table>
-            <tr>
-                <td style="width:640px;padding: 10px 5px;text-align: justify;"><?= isset($catatan_ht) ? $catatan_ht : "-"; ?></td>
-            </tr>
-        </table>
-        <div class="blue-line" style="width:660px;border-top: 1px #0162b1;"></div>
-        <br><br>
-        <table>
-            <tr>
-                <td style="width:450px">
-                    MUTIARA HARAPAN ISLAMIC SCHOOL<br>
-                    <?php echo $this->config->item('kota'); ?>, <?php echo tjs($tgl_rapor, "l"); ?><br>
+                <br><br><br><br>
+                <u><b><?= $wali_kelas; ?></b></u><br>
+                Homeroom Teacher <br>
+            </td>
+            <td>
 
-                    <br><br><br><br>
-                    <u><b><?= $wali_kelas; ?></b></u><br>
-                    Homeroom Teacher <br>
-                </td>
-                <td>
+            </td>
+            <td></td>
+            <td>
 
-                </td>
-                <td></td>
-                <td>
-
-                    <br><br><br><br><br><br>
-                    <u><b><?= $kepala_sekolah; ?></b></u><br>
-                    Secondary Principal
-                </td>
-            </tr>
-        </table>
-    </page>
+                <br><br><br><br><br><br>
+                <u><b><?= $kepala_sekolah; ?></b></u><br>
+                Secondary Principal
+            </td>
+        </tr>
+    </table>
+</page>
