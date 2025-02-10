@@ -118,7 +118,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                            <td style="width:710px;text-align: justify;text-justify: inter-word;">
                                 <?= $kelA['nilai_catatan'] ?>
                             </td>
                         </tr>
@@ -170,7 +170,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                            <td style="width:710px;text-align: justify;text-justify: inter-word;">
                                 <?= $kelB['nilai_catatan'] ?>
                             </td>
                         </tr>
@@ -222,7 +222,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                            <td style="width:710px;text-align: justify;text-justify: inter-word;">
                                 <?= $kelC['nilai_catatan'] ?>
                             </td>
                         </tr>
@@ -274,7 +274,7 @@
                         </tr>
                         <tr>
                             <td></td>
-                            <td style="width:650px;text-align: justify;text-justify: inter-word;">
+                            <td style="width:710px;text-align: justify;text-justify: inter-word;">
                                 <?= $kelMulok['nilai_catatan'] ?>
                             </td>
                         </tr>
