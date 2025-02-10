@@ -90,7 +90,7 @@
                         <tr>
                             <td></td>
                             <td style="width:400px;color:#0162b1;"><?= $kelA['mapel'] ?></td>
-                            <td style="width:250px;text-align: right">Teacher: <?= $kelA['nama_guru'] ?></td>
+                            <td>Teacher: <?= $kelA['nama_guru'] ?></td>
                         </tr>
                     </table>
                     <table class="table" style="text-align: center;">
@@ -142,7 +142,7 @@
                         <tr>
                             <td></td>
                             <td style="width:400px;color:#0162b1;"><?= $kelB['mapel'] ?></td>
-                            <td style="width:250px;text-align: right">Teacher: <?= $kelB['nama_guru'] ?></td>
+                            <td>Teacher: <?= $kelB['nama_guru'] ?></td>
                         </tr>
                     </table>
                     <table class="table" style="text-align: center;">
@@ -194,7 +194,7 @@
                         <tr>
                             <td></td>
                             <td style="width:400px;color:#0162b1;"><?= $kelC['mapel'] ?></td>
-                            <td style="width:250px;text-align: right">Teacher: <?= $kelC['nama_guru'] ?></td>
+                            <td>Teacher: <?= $kelC['nama_guru'] ?></td>
                         </tr>
                     </table>
                     <table class="table" style="text-align: center;">
@@ -246,7 +246,7 @@
                         <tr>
                             <td></td>
                             <td style="width:400px;color:#0162b1;"><?= $kelMulok['mapel'] ?></td>
-                            <td style="width:250px;text-align: right">Teacher: <?= $kelMulok['nama_guru'] ?></td>
+                            <td>Teacher: <?= $kelMulok['nama_guru'] ?></td>
                         </tr>
                     </table>
                     <table class="table" style="text-align: center;">
@@ -287,7 +287,7 @@
 
     <!-- end rapor -->
     <br><br>
-    <br>
+    <br><br>
     <table>
         <tr>
             <td><b>ISLAMIC CHARACTER BUILDING</b></td>
