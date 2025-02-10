@@ -1,17 +1,4 @@
 <page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
-    <!-- <page_footer backbottom="2mm">
-        <table>
-            <tr>
-                <td style="width:50px"></td>
-                <td style="width:300px"><i><?= $nama; ?><br><?= $nis; ?></i></td>
-                <td style="width:230px"><i>Page [[page_cu]] of [[page_nb]]</i></td>
-                <td style="width:80px"><img src="https://report.mhis.link/images/cambridge1.png"></td>
-            </tr>
-            <tr>
-                <td style="width:50px;height:20px" colspan="3"></td>
-            </tr>
-        </table>
-    </page_footer> -->
     <style type="text/css">
         body {
             font-family: arial;
@@ -300,19 +287,6 @@
 
     <!-- end rapor -->
     <page backtop="7mm" backbottom="17mm" backleft="25mm" backimg="https://report.mhis.link/images/hanya_logo_op.png" backimgw="50%">
-        <page_footer backbottom="2mm">
-            <table>
-                <tr>
-                    <td style="width:50px"></td>
-                    <td style="width:300px"><i><?= $nama; ?><br><?= $nis; ?></i></td>
-                    <td style="width:230px"><i>Page [[page_cu]] of [[page_nb]]</i></td>
-                    <td style="width:80px"><img src="https://report.mhis.link/images/cambridge1.png"></td>
-                </tr>
-                <tr>
-                    <td style="width:50px;height:20px" colspan="3"></td>
-                </tr>
-            </table>
-        </page_footer>
         <br><br>
         <table>
             <tr>
