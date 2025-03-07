@@ -1184,7 +1184,7 @@ class Cetak_raport_pts extends CI_Controller
             $idx = $a2['idmapel'];
             $kkmx = $a2['kkm'];
             $array_kkm[] = $kkmx;
-            $lang_mapel = $a2['lang'];
+            $lang_mapel = $a2['lang'] ?? "";
 
             //$pc_nilai = explode("//", $a2['nilai']);
 
