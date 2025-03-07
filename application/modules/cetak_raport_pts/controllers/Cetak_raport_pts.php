@@ -1803,7 +1803,7 @@ class Cetak_raport_pts extends CI_Controller
             } elseif ($nka < $kkmx) {
                 $predikatx1 = "belum tuntas";
             }
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
