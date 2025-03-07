@@ -184,7 +184,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
 
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
@@ -215,7 +215,7 @@ class Cetak_raport_pts extends CI_Controller
 
             $nilai_pengetahuan[$k]['nilai'] = number_format($_np);
             $nilai_pengetahuan[$k]['predikat'] = nilai_huruf($kkmx, $_np);
-            if ($lang_mapel == 'eng') {
+            if (($lang_mapel ?? "") == 'eng') {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
@@ -350,7 +350,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
 
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
@@ -730,7 +730,7 @@ class Cetak_raport_pts extends CI_Controller
             } elseif ($nka < $kkmx) {
                 $predikatx1 = "belum tuntas";
             }
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -809,7 +809,7 @@ class Cetak_raport_pts extends CI_Controller
                 $predikatx1 = "belum tuntas";
             }
 
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -888,7 +888,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -966,7 +966,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -1041,7 +1041,7 @@ class Cetak_raport_pts extends CI_Controller
                 $predikatx1 = "belum tuntas";
             }
 
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -1254,7 +1254,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
 
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
@@ -1285,7 +1285,7 @@ class Cetak_raport_pts extends CI_Controller
 
             $nilai_pengetahuan[$k]['nilai'] = number_format($_np);
             $nilai_pengetahuan[$k]['predikat'] = nilai_huruf($kkmx, $_np);
-            if ($lang_mapel == 'eng') {
+            if (($lang_mapel ?? "") == 'eng') {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
             } else {
                 $nilai_pengetahuan[$k]['desk'] = empty($array1[$k]['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $array1[$k]['c'];
@@ -1420,7 +1420,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
 
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
@@ -1883,7 +1883,7 @@ class Cetak_raport_pts extends CI_Controller
                 $predikatx1 = "belum tuntas";
             }
 
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -1963,7 +1963,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -2043,7 +2043,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -2122,7 +2122,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -2198,7 +2198,7 @@ class Cetak_raport_pts extends CI_Controller
                 $predikatx1 = "belum tuntas";
             }
 
-            if ($lang_mapel == "eng") {
+            if (($lang_mapel ?? "") == "eng") {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
             } else {
                 $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -2278,7 +2278,7 @@ class Cetak_raport_pts extends CI_Controller
                     $predikatx1 = "belum tuntas";
                 }
 
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". You did " . $nilai_keterampilan[$idx]['desk'];
                 } else {
                     $nkd = empty($nilai_keterampilan[$idx]['desk']) ? "-" : "Capaian kompetensi Ananda " . $siswa['nama'] . " " . $predikatx1 . " dengan predikat " . nilai_pre($kkmx, $nka, $lang_mapel) . ". Kamu telah " . $nilai_keterampilan[$idx]['desk'];
@@ -2585,7 +2585,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
 
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
@@ -2627,7 +2627,7 @@ class Cetak_raport_pts extends CI_Controller
                 "tipe" => 1, // 1. Pengetahuan 2. Keterampilan
 
             ];
-            if ($lang_mapel == 'eng') {
+            if (($lang_mapel ?? "") == 'eng') {
                 $pengetahuan['desk'] =  empty($k['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
             } else {
                 $pengetahuan['desk'] =  empty($k['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
@@ -2712,7 +2712,7 @@ class Cetak_raport_pts extends CI_Controller
                 $pc_nilai_h = explode("//", $arrayh);
                 $_desk = nilai_pre($kkmx, $pc_nilai_h[0], $lang_mapel);
                 $do = do_lang($kkmx, $pc_nilai_h[0]);
-                if ($lang_mapel == "eng") {
+                if (($lang_mapel ?? "") == "eng") {
                     $_desk1 = 'However, you ' . $do . ' continue to develop your comprehension on how to';
                     $desk[$_desk][] = "on how to " . $pc_nilai_h[1];
                     $desk[$_desk1][] = $pc_nilai_hmin[1];
@@ -2748,7 +2748,7 @@ class Cetak_raport_pts extends CI_Controller
                 'predikat' => nilai_huruf($kkmx, $_nilai_keterampilan),
                 "tipe" => 2, // 1. pengetauan 2. keterampilan
             ];
-            if ($lang_mapel == 'eng') {
+            if (($lang_mapel ?? "") == 'eng') {
                 $keterampilan['desk'] = empty($k['c']) ? 'You did ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
             } else {
                 $keterampilan['desk'] = empty($k['c']) ? 'Kamu telah ' . str_replace('; ', '. ', implode("; ", $txt_desk)) : $k['c'];
