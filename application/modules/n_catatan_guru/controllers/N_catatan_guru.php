@@ -60,7 +60,7 @@ class N_catatan_guru extends CI_Controller
                                 LEFT JOIN m_siswa d ON c.id_siswa = d.id
                                 WHERE c.id_kelas = " . $pc_bawa[1] . " AND b.id_mapel = " . $pc_bawa[0] . " AND a.jenis = 'c'
                                 AND a.tasm = '" . $this->d['tasm'] . "'
-                                ORDER BY d.id")->result_array();
+                                ORDER BY d.nama ASC")->result_array();
         $q_kd_guru_ini = $this->db->query("SELECT a.* 
                                     FROM t_mapel_kd a
                                     LEFT JOIN m_kelas b ON a.tingkat = b.tingkat

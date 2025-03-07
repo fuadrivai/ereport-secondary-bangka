@@ -291,7 +291,7 @@ class N_icb extends CI_Controller
                                 LEFT JOIN m_siswa d ON c.id_siswa = d.id
                                 WHERE c.id_kelas = " . $pc_bawa[1] . " AND b.id_mapel = " . $pc_bawa[0] . "
                                 AND a.tasm = '" . $this->d['tasm'] . "'
-                                ORDER BY d.id")->result_array();
+                                ORDER BY d.nama ASC")->result_array();
 
         $q_nilai_ta = $this->db->query("SELECT 
                                 d.nama nmsiswa, a.jenis, a.id_siswa, a.nilai
@@ -301,7 +301,7 @@ class N_icb extends CI_Controller
                                 LEFT JOIN m_siswa d ON c.id_siswa = d.id
                                 WHERE c.id_kelas = " . $pc_bawa[1] . " AND b.id_mapel = " . $pc_bawa[0] . " AND a.jenis != 'h'
                                 AND a.tasm = '" . $this->d['tasm'] . "'
-                                ORDER BY d.id")->result_array();
+                                ORDER BY d.nama ASC")->result_array();
 
         $q_kd_guru_ini = $this->db->query("SELECT a.* 
                                     FROM t_mapel_kd a
@@ -311,7 +311,7 @@ class N_icb extends CI_Controller
                                     AND b.id = " . $pc_bawa[1] . " 
                                     AND a.semester = '" . $this->d['semester'] . "'
                                     AND a.jenis = 'P'")->result_array();
-        $q_siswa_kelas = $this->db->query("SELECT a.id_siswa, b.nama nmsiswa FROM t_kelas_siswa a LEFT JOIN m_siswa b ON a.id_siswa = b.id WHERE a.id_kelas = '" . $pc_bawa[1] . "' AND a.ta = '" . $this->d['tahun'] . "'")->result_array();
+        $q_siswa_kelas = $this->db->query("SELECT a.id_siswa, b.nama nmsiswa FROM t_kelas_siswa a LEFT JOIN m_siswa b ON a.id_siswa = b.id WHERE a.id_kelas = '" . $pc_bawa[1] . "' AND a.ta = '" . $this->d['tahun'] . "' ORDER BY b.nama ASC")->result_array();
 
         $d_kd = array();
         if (!empty($q_kd_guru_ini)) {
